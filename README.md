@@ -1,2 +1,3 @@
-# CustomSE
-My personal customization of Stack Exchange sites
+# SpamTracker
+
+Chrome extension. Alerts of suspicious new posts, as well as of spam reports in chat.
