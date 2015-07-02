@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+
+  "name": "Fight spam on SE sites",
+  "description": "Alerts of suspicious new posts, and of spam reports in chat",
+  "version": "15.7.1",
+  
+  "icons": {
+     "16": "icon16.png",
+     "48": "icon48.png",
+     "128": "icon128.png"
+   },
+   
+  "permissions": [
+          "storage",
+          "notifications",
+          "background",
+          "tabs"
+   ],
+   
+  "background": {
+    "scripts": ["notify.js"],
+    "persistent": false
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://chat.meta.stackexchange.com/*"],
+      "js": ["chat.js"]
+    },
+    {
+      "matches": ["*://stackexchange.com/search?tab=realtime"],
+ 	    "js": ["realtime.js"],
+ 	    "css": ["realtime.css"]
+    }
+}
+
+
