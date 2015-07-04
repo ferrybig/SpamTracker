@@ -25,14 +25,11 @@
 
   "content_scripts": [
     {
-      "matches": ["*://chat.meta.stackexchange.com/*"],
-      "js": ["chat.js"]
-    },
-    {
-      "matches": ["*://stackexchange.com/search?tab=realtime"],
- 	    "js": ["realtime.js"],
- 	    "css": ["realtime.css"]
+      "matches": ["*://chat.meta.stackexchange.com/*", "*://chat.stackexchange.com/*", "*://chat.stackoverflow.com/*"],
+      "js": ["chat.js"],
+      "css": ["chat.css"]
     }
+  ]
 }
 
 

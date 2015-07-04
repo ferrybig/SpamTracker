@@ -21,12 +21,12 @@ chrome.runtime.onMessage.addListener(function(msg, sender) {
 
 chrome.notifications.onClicked.addListener(function(id) {
   var t = id.split('-');
-  if (t[0] == 'chat' && t[1] != 'na') {
+  if (/^chat/.test(t[0]) && t[1] != 'na') {
     chrome.windows.create({url: 'http://'+t[1]+'/q/'+t[2]});
   }
-  if (t[0] != 'chat')  {
+  if (!/^chat/.test(t[0]))  {
     chrome.windows.create({url: 'http://'+t[0]+'/q/'+t[1]});
-    chrome.tabs.query({url: "*://stackexchange.com/search?tab=realtime"}, function(tabs) {
+    chrome.tabs.query({url: '*://stackexchange.com/search?tab=realtime'}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {dismiss: id});
     });
   }
@@ -35,15 +35,15 @@ chrome.notifications.onClicked.addListener(function(id) {
 
 
 function dismissRealtime(id) {
-  chrome.tabs.query({url: "*://stackexchange.com/search?tab=realtime"}, function(tabs) {
+  chrome.tabs.query({url: '*://stackexchange.com/search?tab=realtime'}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {dismiss: id});
   });
   chrome.notifications.clear(id, callbackNotificationCleared);
 }
 
 chrome.notifications.onButtonClicked.addListener(function(id,buttonIndex) {
-  if (id.split('-')[0] == 'chat') {
-    chrome.tabs.query({url: "*://chat.meta.stackexchange.com/*"}, function(tabs) {
+  if (/^chat/.test(id)) {
+    chrome.tabs.query({url: '*://'+id.split('-')[0]+'*'}, function(tabs) {
       chrome.tabs.update(tabs[0].id, {active: true});
     });
   }
@@ -53,7 +53,7 @@ chrome.notifications.onButtonClicked.addListener(function(id,buttonIndex) {
 });
 
 chrome.notifications.onClosed.addListener(function(id, byUser) {
-  if (byUser && id.split('-')[0] != 'chat') {
+  if (byUser && !/^chat/.test(id)) {
     dismissRealtime(id);
   }
 });

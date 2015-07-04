@@ -1,0 +1,28 @@
+#roomdesc, #room-tags {
+  display: none;
+}
+
+.q-block {
+  padding: 5px 0px;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+.q-title {
+  color: #333;
+  font-weight: bold;
+  margin: 2px;
+  display: block;
+}
+
+a.q-title:visited {
+  color: #888 !important;
+}
+ 
+#priorityList {
+  background-color: #ffffff;
+}
+
+#clearchat, #clearside {
+  margin-left: 2px;
+}
