@@ -18,6 +18,8 @@ var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
 
 var ignoredSites = ['biology', 'christianity', 'fitness', 'health', 'hermeneutics', 'hinduism', 'islam', 'ja', 'judaism', 'lifehacks', 'pt'];
 
+
+
 var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
 var ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
 ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
@@ -63,7 +65,7 @@ var inserted = [], time = 0;
 
 
 function processQuestion(q) {
-  var i, data, url, site, shortSite, qId, uId, siteQid, title, user, summary, qblock, insert, priority, hh;
+  var i, data, url, site, shortSite, qId, uId, siteQid, title, user, summary, qblock, insert, consider, hh, report, reg;
   var msgId, msgTitle;
   time = Math.max(time, q.lastActivityDate);
   title = q.titleEncodedFancy;
@@ -74,36 +76,57 @@ function processQuestion(q) {
   user = q.ownerDisplayName;
   summary = q.bodySummary;
   uId = (q.ownerUrl ? parseInt(q.ownerUrl.split('/')[4],10) : 0);
-  if (!stored.maxQ[site] || qId>stored.maxQ[site]) {
-    stored.maxQ[site] = qId;
+  if (!stored.maxQ[site]) {
+    stored.maxQ[site] = 1;
   }
-  if (!stored.maxU[site] || uId>stored.maxU[site]) {
-    stored.maxU[site] = uId;
+  if (!stored.maxU[site]) {
+    stored.maxU[site] = 1;
   }
   siteQid = shortSite+qId;
-  priority = false;
-  insert = false;
-  insert = insert || (uId > stored.maxU[site]-3);
-  insert = insert || (summary.length < 120);
-  insert = insert && (qId == stored.maxQ[site]);
-  insert = insert && (ignoredSites.indexOf(shortSite) == -1);
-  insert = insert && (inserted.indexOf(siteQid) == -1);
-  if (insert) {
-    inserted.push(siteQid);
-    msgId = site+'-'+qId;
-    msgTitle = shortSite+': '+title;
-    qblock = newPost(msgId,url,title,shortSite,q.ownerUrl,user,summary);
+  consider = (uId > stored.maxU[site]-3 && uId < stored.maxU[site] + 10) ;
+  consider = consider && (qId > stored.maxQ[site] && qId < stored.maxQ[site] + 20);
+  consider = consider && (ignoredSites.indexOf(shortSite) == -1);
+  consider = consider && (inserted.indexOf(siteQid) == -1);
+  report = site+'/'+qId+' ';
+  if (consider) {
+    insert = false;
+    if (summary.length < 100) {
+      insert = true;
+      report = report + 'short summary:' + summary + '\n';
+    }
     hh = new Date().getUTCHours();
-    priority = priority || (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10);
-    priority = priority || bad(title, titleRules) || bad(summary, sumRules);
-    if (priority) {
-      //   beep.play();
+    insert = insert || (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10);
+    reg = bad(title, titleRules);
+    if (reg) {
+      insert = true;
+      report = report + 'title matched ' + reg;
+    }
+    else {
+      reg = bad(summary, sumRules);
+      if (reg) {
+        insert = true;
+        report = report + 'summary matched ' + reg;
+      }
+    }
+    if (insert) {
+      console.log(report);
+      inserted.push(siteQid);
+      msgId = site+'-'+qId;
+      msgTitle = shortSite+': '+title;
+      qblock = newPost(msgId,url,title,shortSite,q.ownerUrl,user,summary);
+      beep.play();
       priorityList.insertBefore(qblock, priorityList.firstElementChild);
       notifyMe(msgId, msgTitle, summary);
     }
   }
   if (prioritySites.indexOf(shortSite)!=-1) {
     window.setTimeout(fetchBody, 60000, shortSite);
+  }
+  if (qId>stored.maxQ[site]) {
+    stored.maxQ[site] = qId;
+  }
+  if (uId>stored.maxU[site]) {
+    stored.maxU[site] = uId;
   }
 }
 
@@ -121,7 +144,8 @@ function newPost(msgId,url,title,shortSite,ownerURL,ownerName,summary) {
 function fetchBody(shortSite) {
   var request = '//api.stackexchange.com/2.2/posts?pagesize=1&order=desc&sort=creation&site='+(shortSite=='ru'?'ru.stackoverflow':shortSite)+'&filter=!iC9ukKyJYHQsubblNz.rBx&key='+apiKey;
   getStuff(request, 'json', function(e) {
-    var q=e.currentTarget.response.items[0], url, site, shortSite, summary, qblock, siteQid, title, elem;
+    var q=e.currentTarget.response.items[0], url, site, shortSite, summary, qblock, siteQid, title, elem, report;
+    shortSite = q.share_link.split('/')[2].split('.')[0];
     siteQid = shortSite + q.post_id;
     if (q.owner.reputation == 1 && inserted.indexOf(siteQid) == -1) {
       inserted.push(siteQid);
@@ -131,9 +155,11 @@ function fetchBody(shortSite) {
       shortSite = site.split('.')[0];
       elem = document.createElement('span');
       elem.innerHTML = q.body;
-      summary = elem.textContent.slice(0,200);
+      summary = elem.textContent.slice(0,150);
       qblock = newPost(site+'-'+q.post_id, url, title, shortSite, q.owner.link, q.owner.display_name, summary);
       priorityList.insertBefore(qblock, priorityList.firstElementChild);
+      report = url+ ' new user on a priority site';
+      console.log(report);
     }
   });
 }
@@ -245,10 +271,8 @@ function saveData() {
 function bad(text, rules) {
   var report;
   for (var i=0; i<rules.length; i++) {
-    if (text.match(rules[i])) {
-      report = '"'+text+'" matched '+rules[i];
-      console.log(report);
-      return true;
+    if (rules[i].test(text)) {
+      return rules[i];
     }
   }
   return false;
