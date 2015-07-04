@@ -97,7 +97,7 @@ function processQuestion(q) {
     priority = priority || (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10);
     priority = priority || bad(title, titleRules) || bad(summary, sumRules);
     if (priority) {
-      beep.play();
+      //   beep.play();
       priorityList.insertBefore(qblock, priorityList.firstElementChild);
       notifyMe(msgId, msgTitle, summary);
     }
@@ -163,27 +163,15 @@ function removeBlock(e) {
 
 
 function killBlock(elem) {
-  if (elem.classList.contains('question-list')) {
-    return;
-  }
   var list = elem.parentNode;
   if (list.classList.contains('question-list')) {
-    if (list.id == 'priorityList') {
-      dismissNotification(elem.id);
-    }
+    dismissNotification(elem.id);
     list.removeChild(elem);
-    updateTitle();
   }
   else {
     killBlock(list);
   }
 }
-
-
-
-
-
-
 
 
 
