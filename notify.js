@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender) {
 chrome.notifications.onClicked.addListener(function(id) {
   var t = id.split('-');
   if (t[1] != 'na') {
-    chrome.windows.create({url: 'http://'+t[1]+'/q/'+t[2], width: 750});
+    chrome.windows.create({url: 'http://'+t[1]+'/q/'+t[2], width: 850});
     chrome.tabs.query({url: '*://'+t[0]+'*'}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {dismiss: id});
     });
