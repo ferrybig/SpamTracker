@@ -271,7 +271,7 @@ function processChatMessage(message) {
       }
     }
     if (site && qId) {
-      sq = site.split('.')[0] + Qid;
+      sq = site.split('.')[0] + qId;
       if (inserted.indexOf(sq) != -1) {
         return;
       }
