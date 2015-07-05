@@ -177,18 +177,22 @@ function processQuestion(q) {
 
 
 function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summary) {
-  var qblock, elem, msgId, shortSite = site.split('.')[0];
+  var qblock, elem, msgId, shortSite = site.split('.')[0], ueTitle, ueSummary;
   if (inserted.indexOf(shortSite+qId) == -1) {
-    beep.play();
+    // beep.play(); too many beeps 
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
-    notifyMe(msgId, shortSite + ' ' + type + ': ' + title, summary);
+    elem = newElem('span', '', '', '');
+    elem.innerHTML = title;
+    ueTitle = elem.textContent;
+    elem.innerHTML = summary;
+    ueSummary = elem.textContent;
+    notifyMe(msgId, shortSite + ' ' + type + ': ' + ueTitle, ueSummary);
   
     qblock = newElem('div',msgId,'q-block','');
     qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + shortSite + ' ' + type+': '+title + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
     qblock.onclick = removeBlock;
-    elem = newElem('span', '', '', '');
     elem.innerHTML = ': '+summary;
     qblock.appendChild(elem);
     priorityList.insertBefore(qblock, priorityList.firstElementChild);
