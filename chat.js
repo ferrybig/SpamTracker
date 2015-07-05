@@ -1,7 +1,7 @@
 var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
-  /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i, /vashikaran/i, /advantage.*price/i,
-  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /natural(ly)?\b/i, /pure\sbody/i, /for\ssale/i,
+  /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /vashikaran/i, /advantage.*price/i,  /natural(ly)?\b/i, /pure\sbody/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i,
+  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i,
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i,
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i ];
 
