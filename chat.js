@@ -265,11 +265,12 @@ function processChatMessage(message) {
       if (ch[i].tagName == 'A') {
         hash = ch[i].href.split('#');
         path = ch[i].href.split('/');
-        site = path[2];
         if (path[3] == 'questions' && hash.length>1) {
-         qId = hash[1];
+          site = path[2];
+          qId = hash[1];
         }
         else if (/^[qa]/.test(path[3])) {
+          site = path[2];
           qId = path[4];
         }
       }
