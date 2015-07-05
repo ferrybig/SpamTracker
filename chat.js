@@ -1,7 +1,3 @@
-var titleRules = [ /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
-  /\b(phone|support).*number\b/i, /\bimprove\b/i, /\bonline\b/i, /\byou\scan\b/i, /\bwow\sgold\b/i, /\bfree\b/i, /\bwholesale\b/i,
-  /\bpurchas/i, /\blover?\b/i, /\bfull\shd\b/i, /\bbaba\s?ji\b/i, /\+91[\s\-\(]/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i ];
-
 var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
   /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i, /vashikaran/i, /advantage.*price/i,
@@ -9,59 +5,96 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i,
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i ];
 
+var titleRules = sumRules.concat([ /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
+  /\b(phone|support).*number\b/i, /\bimprove\b/i, /\bonline\b/i, /\byou\scan\b/i, /\bwow\sgold\b/i, /\bfree\b/i, /\bwholesale\b/i,
+  /\bpurchas/i, /\blover?\b/i, /\bfull\shd\b/i, /\bbaba\s?ji\b/i, /\+91[\s\-\(]/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i ]);
+
+
 var prioritySites = ['android', 'beer', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'datascience',
   'ebooks', 'economics', 'engineering', 'expatriates', 'freelancing', 'genealogy', 'ham', 'hsm', 'law',
   'martialarts', 'mechanics', 'money', 'musicfans', 'mythology', 'outdoors', 'patents', 'pm', 'poker',
-  'productivity', 'quant', 'robotics', 'ru', 'rus', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'woodworking'];
+  'productivity', 'quant', 'robotics', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'woodworking'];
 
 var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
 
 var ignoredSites = ['biology', 'christianity', 'fitness', 'health', 'hermeneutics', 'hinduism', 'islam', 'ja', 'judaism', 'lifehacks', 'pt'];
 
-
-
-var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
-var ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
-ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
-ws.onopen = function() { ws.send('155-questions-active'); };
+var insertRef, ws, clearchat, clearside, observer, priorityList, savingData;
+var observer = new MutationObserver(function(mutations) {
+      var messageList = document.getElementsByClassName('message');
+      var message = messageList[messageList.length-1];
+      if (message && !message.classList.contains('checkedForSpam')) {
+        message.classList.add('checkedForSpam');
+        if (message.children[1] && !message.parentNode.parentNode.classList.contains('mine') && !message.querySelector('.onebox')) {
+          processChatMessage(message);
+        }
+      }
+    });
 
 var box = document.getElementById('input');
 var chat = document.getElementById('chat');
-if (chat) {
-  var observer = new MutationObserver(function(mutations) {
-    var messageList = document.getElementsByClassName('message');
-    var message = messageList[messageList.length-1];
-    if (message && !message.classList.contains('checkedForSpam')) {
-      message.classList.add('checkedForSpam');
-      if (message.children[1] && !message.parentNode.parentNode.classList.contains('mine') && !message.querySelector('.onebox')) {
-        processChatMessage(message);
-      }
-    }
-  });
-}
 
-var clearchat = newElem('a', 'clearchat', 'button', 'clear');
-clearchat.onclick = clearChat;
-var br = document.querySelector('#container br');
-br.parentNode.insertBefore(clearchat, br);
+insertRef = document.getElementById('footer-legal');
+var separator = document.createTextNode(' | ');
+insertRef.insertBefore(separator, insertRef.firstChild);
 
-var clearside = newElem('a', 'clearside', 'button', 'clear');
-clearside.onclick = clearSide;
-var bdiv = document.querySelector('.fl');
-// bdiv.style['margin-bottom'] = '20px';
-bdiv.appendChild(clearside);
+var onoff = newElem('a', 'on-off', '', 'spamtracker: off');
+onoff.title = 'toggle spam tracking';
+onoff.onclick = toggleTracking;
+onoff.style.cursor = 'pointer';
+insertRef.insertBefore(onoff, insertRef.firstChild);
 
-
-var roomtitle = document.getElementById('roomtitle');
-var priorityList = newElem('div','priorityList','question-list','');
-roomtitle.parentNode.insertBefore(priorityList, roomtitle);
-
-
-var elem;
 var beep = new Audio('http://cdn-chat.sstatic.net/chat/se.mp3');   // vs meta2.mp3
 var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
-var stored = {maxQ: {}, maxU: {}};
+var stored = {maxQ: {}, maxU: {}, track: {}};
 var inserted = [], time = 0;
+
+chrome.storage.sync.get(stored, function(items) {
+  var add = window.location.hash.split('/');
+  var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
+  stored = items;
+  if (add[0]=='#log') {
+    console.log(stored.maxQ);
+    console.log(stored.maxU);
+  }
+  if (stored.track[room]) {
+    switchOn();
+  }
+});
+
+
+function switchOn() {
+  var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
+  ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
+  ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
+  ws.onopen = function() { ws.send('155-questions-active'); };
+  observer.observe(chat, {childList: true});
+
+  clearchat = newElem('a', 'clearchat', 'button', 'clear');
+  clearchat.title = 'remove all chat messages';
+  clearchat.onclick = clearChat;
+  insertRef = document.querySelector('#container br');
+  insertRef.parentNode.insertBefore(clearchat, insertRef);
+
+  clearside = newElem('a', 'clearside', 'button', 'clear');
+  clearside.title = 'dismiss all reports';
+  clearside.onclick = clearSide;
+  insertRef = document.querySelector('.fl');
+  insertRef.appendChild(clearside);
+
+  insertRef = document.getElementById('roomtitle');
+  priorityList = newElem('div','priorityList','question-list','');
+  insertRef.parentNode.insertBefore(priorityList, insertRef);
+}
+
+
+function switchOff() {
+  ws.close();
+  observer.disconnect();
+  clearchat.remove();
+  clearside.remove();
+  priorityList.remove();
+}
 
 
 function processQuestion(q) {
@@ -232,14 +265,14 @@ function processChatMessage(message) {
     }
     room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     msg.id = room+'-'+post+'-'+Date.now();
-    parts = m.children[1].textContent.split(': ');
+    parts = message.children[1].textContent.split(': ');
     if (parts.length > 1) {
       msg.title = parts[0];
       msg.message = parts[1];
     }
     else {
       msg.title = 'Flag Request';
-      msg.message = m.children[1].textContent;
+      msg.message = message.children[1].textContent;
     }
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
@@ -258,6 +291,21 @@ function clearChat() {
 function clearSide() {
   while (priorityList.firstElementChild) {
     priorityList.removeChild(priorityList.firstElementChild);
+  }
+}
+
+
+function toggleTracking() {
+  room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
+  if (/off$/.test(onoff.textContent)) {
+    onoff.textContent = 'spamtracker: on';
+    switchOn();
+    stored.track[room] = true;
+  }
+  else {
+    onoff.textContent = 'spamtracker: off';
+    switchOff();
+    stored.track[room] = false;
   }
 }
 
