@@ -183,10 +183,10 @@ function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summ
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
-    notifyMe(msgId, type+': '+title+' &mdash; '+shortSite, summary);
+    notifyMe(msgId, shortSite + ' ' + type + ': ' + title, summary);
   
     qblock = newElem('div',msgId,'q-block','');
-    qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + type + ': ' + title + ' &mdash; ' + shortSite + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
+    qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + shortSite + ' ' + type+': '+title + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
     qblock.onclick = removeBlock;
     elem = newElem('span', '', '', '');
     elem.innerHTML = ': '+summary;
