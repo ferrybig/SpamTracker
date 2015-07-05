@@ -30,38 +30,51 @@ var observer = new MutationObserver(function(mutations) {
         }
       }
     });
-
-var box = document.getElementById('input');
-var chat = document.getElementById('chat');
-
-insertRef = document.getElementById('footer-legal');
-var separator = document.createTextNode(' | ');
-insertRef.insertBefore(separator, insertRef.firstChild);
-
-var onoff = newElem('a', 'on-off', '', 'spamtracker: off');
-onoff.title = 'toggle spam tracking';
-onoff.onclick = toggleTracking;
-onoff.style.cursor = 'pointer';
-insertRef.insertBefore(onoff, insertRef.firstChild);
-
-var beep = new Audio('http://cdn-chat.sstatic.net/chat/se.mp3');   // vs meta2.mp3
-var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
-var stored = {maxQ: {}, maxU: {}, track: {}};
-var inserted = [], time = 0;
-
-chrome.storage.sync.get(stored, function(items) {
-  var add = window.location.hash.split('/');
-  var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
-  stored = items;
-  if (add[0]=='#log') {
-    console.log(stored.maxQ);
-    console.log(stored.maxU);
-  }
-  if (stored.track[room]) {
-    switchOn();
+    
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.dismiss) {
+    var elem = document.getElementById(request.dismiss);
+    if (elem) {
+      elem.remove();
+    }
   }
 });
 
+var box = document.getElementById('input');
+var chat = document.getElementById('chat');
+var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
+
+if (box && chat && room) {
+  insertRef = document.getElementById('footer-legal');
+  var separator = document.createTextNode(' | ');
+  insertRef.insertBefore(separator, insertRef.firstChild);
+  
+  var onoff = newElem('a', 'on-off', '', 'spamtracker: off');
+  onoff.title = 'toggle spam tracking';
+  onoff.onclick = toggleTracking;
+  onoff.style.cursor = 'pointer';
+  insertRef.insertBefore(onoff, insertRef.firstChild);
+  
+  var beep = new Audio('http://cdn-chat.sstatic.net/chat/se.mp3');
+  var metabeep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
+  
+  var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
+  var stored = {maxQ: {}, maxU: {}, track: {}};
+  var inserted = [], time = 0;
+  
+  chrome.storage.sync.get(stored, function(items) {
+    var add = window.location.hash.split('/');
+    var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
+    stored = items;
+    if (add[0]=='#log') {
+      console.log(stored.maxQ);
+      console.log(stored.maxU);
+    }
+    if (stored.track[room]) {
+      switchOn();
+    }
+  });
+}
 
 function switchOn() {
   var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
@@ -85,6 +98,9 @@ function switchOn() {
   insertRef = document.getElementById('roomtitle');
   priorityList = newElem('div','priorityList','question-list','');
   insertRef.parentNode.insertBefore(priorityList, insertRef);
+
+  onoff.textContent = 'spamtracker: on';
+  savingData = window.setInterval(function() {chrome.storage.sync.set(stored);}, 120000);
 }
 
 
@@ -94,11 +110,13 @@ function switchOff() {
   clearchat.remove();
   clearside.remove();
   priorityList.remove();
+  onoff.textContent = 'spamtracker: off';
+  window.clearInterval(savingData);
 }
 
 
 function processQuestion(q) {
-  var i, data, url, site, shortSite, qId, uId, siteQid, title, user, summary, qblock, insert, consider, hh, report, reg;
+  var i, data, url, site, shortSite, qId, uId, title, user, summary, qblock, insert, consider, hh, report, reg;
   var msgId, msgTitle;
   time = Math.max(time, q.lastActivityDate);
   title = q.titleEncodedFancy;
@@ -115,11 +133,9 @@ function processQuestion(q) {
   if (!stored.maxU[site]) {
     stored.maxU[site] = 1;
   }
-  siteQid = shortSite+qId;
-  consider = (uId > stored.maxU[site]-3 && uId < stored.maxU[site] + 10) ;
-  consider = consider && (qId > stored.maxQ[site] && qId < stored.maxQ[site] + 20);
+  consider = (uId > stored.maxU[site]-3 && uId < 1.01*stored.maxU[site]) ;
+  consider = consider && (qId > stored.maxQ[site] && qId < 1.01*stored.maxQ[site]);
   consider = consider && (ignoredSites.indexOf(shortSite) == -1);
-  consider = consider && (inserted.indexOf(siteQid) == -1);
   report = site+'/'+qId+' ';
   if (consider) {
     insert = false;
@@ -128,28 +144,24 @@ function processQuestion(q) {
       report = report + 'short summary:' + summary + '\n';
     }
     hh = new Date().getUTCHours();
-    insert = insert || (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10);
+    if (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10) {
+      insert = true;
+      report = report + 'peak spam time\n';
+    }
     reg = bad(title, titleRules);
     if (reg) {
       insert = true;
-      report = report + 'title matched ' + reg;
+      report = report + 'title matched ' + reg + '\n';
     }
     else {
       reg = bad(summary, sumRules);
       if (reg) {
         insert = true;
-        report = report + 'summary matched ' + reg;
+        report = report + 'summary matched ' + reg + '\n';
       }
     }
     if (insert) {
-      console.log(report);
-      inserted.push(siteQid);
-      msgId = site+'-'+qId;
-      msgTitle = shortSite+': '+title;
-      qblock = newPost(msgId,url,title,shortSite,q.ownerUrl,user,summary);
-      beep.play();
-      priorityList.insertBefore(qblock, priorityList.firstElementChild);
-      notifyMe(msgId, msgTitle, summary);
+      reportIt(report, site, qId, 'Q', title, url, q.ownerUrl, user, summary);
     }
   }
   if (prioritySites.indexOf(shortSite)!=-1) {
@@ -164,35 +176,39 @@ function processQuestion(q) {
 }
 
 
-function newPost(msgId,url,title,shortSite,ownerURL,ownerName,summary) {
-  var qblock = newElem('div',msgId,'q-block',''), elem = newElem('span', '', '', '');
-	qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + title + (shortSite=='math' ? '' : ' &mdash; '+shortSite) + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
-  qblock.onclick = removeBlock;
-  elem.innerHTML = ': '+summary;
-  qblock.appendChild(elem);
-  return qblock;
+function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summary) {
+  var qblock, elem, msgId, shortSite = site.split('.')[0];
+  if (inserted.indexOf(shortSite+qId) == -1) {
+    beep.play();
+    console.log(report);
+    inserted.push(shortSite+qId);
+    msgId = room+'-'+site+'-'+qId+'-'+Date.now();
+    notifyMe(msgId, shortSite+': '+title, summary);
+  
+    qblock = newElem('div',msgId,'q-block','');
+    qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + type + ': ' + title + ' &mdash; ' + shortSite + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
+    qblock.onclick = removeBlock;
+    elem = newElem('span', '', '', '');
+    elem.innerHTML = ': '+summary;
+    qblock.appendChild(elem);
+    priorityList.insertBefore(qblock, priorityList.firstElementChild);
+  }
 }
 
 
 function fetchBody(shortSite) {
   var request = '//api.stackexchange.com/2.2/posts?pagesize=1&order=desc&sort=creation&site='+(shortSite=='ru'?'ru.stackoverflow':shortSite)+'&filter=!iC9ukKyJYHQsubblNz.rBx&key='+apiKey;
   getStuff(request, 'json', function(e) {
-    var q=e.currentTarget.response.items[0], url, site, shortSite, summary, qblock, siteQid, title, elem, report;
-    shortSite = q.share_link.split('/')[2].split('.')[0];
-    siteQid = shortSite + q.post_id;
-    if (q.owner.reputation == 1 && inserted.indexOf(siteQid) == -1) {
-      inserted.push(siteQid);
-      title = (q.post_type=='question' ? 'Q: ' : 'A: ') + q.title;
+    var q=e.currentTarget.response.items[0], url, site, summary, elem, report, qId;
+    if (q.owner.reputation == 1) {
       url = q.share_link;
       site = url.split('/')[2];
-      shortSite = site.split('.')[0];
+      qId = q.post_id;
       elem = document.createElement('span');
       elem.innerHTML = q.body;
       summary = elem.textContent.slice(0,150);
-      qblock = newPost(site+'-'+q.post_id, url, title, shortSite, q.owner.link, q.owner.display_name, summary);
-      priorityList.insertBefore(qblock, priorityList.firstElementChild);
-      report = url+ ' new user on a priority site';
-      console.log(report);
+      report = url+' new user on a priority site';
+      reportIt(report, site, qId, (q.post_type=='question' ? 'Q' : 'A'), q.title, url, q.owner.link, q.owner.display_name, summary);
     }
   });
 }
@@ -203,7 +219,7 @@ function notifyMe(id,title,message) {
   msg.id = id;
   msg.title = title;
   msg.message = message;
-  msg.type = 'question';
+  msg.type = 'post';
   chrome.runtime.sendMessage(msg);
 }
 
@@ -236,35 +252,34 @@ function killBlock(elem) {
 
 function processChatMessage(message) {
   var smoke = /spam|\/smokedetector|low quality|offensive|\brude\b|\babus/i;
-  var beep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
   var content = message.children[1].innerHTML;
-  var i, msg = {}, parts, ch, post, path, hash, room, siteQid;
-  
+  var i, msg = {}, parts, ch, path, hash, site = '', qId = '', sq;
   if (smoke.test(content) && /http/i.test(content)) {
-    beep.play();
+    metabeep.play();
     ch = message.children[1].children;
-    post = 'na-na';
-    siteQid = '';
     for (i=ch.length-1; i>=0; i--) {
       if (ch[i].tagName == 'A') {
         hash = ch[i].href.split('#');
         path = ch[i].href.split('/');
+        site = path[2];
         if (path[3] == 'questions' && hash.length>1) {
-         post = path[2]+'-'+hash[1];
+         qId = hash[1];
         }
-        else if (path[3] == 'a' || path[3] == 'q' || path[3] == 'questions') {
-          post = path[2]+'-'+path[4];
-          if (/^q/.test(path[3])) {
-            siteQid = path[2].split('.')[0] + path[4];
-          }
+        else if (/^[qa]/.test(path[3])) {
+          qId = path[4];
         }
       }
     }
-    if (siteQid) {
-      inserted.push(siteQid);
+    if (site && qId) {
+      sq = site.split('.')[0] + Qid;
+      if (inserted.indexOf(sq) != -1) {
+        return;
+      }
+      else {
+        inserted.push();
+      }
     }
-    room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
-    msg.id = room+'-'+post+'-'+Date.now();
+    msg.id = room+'-'+site+'-'+qId+'-'+Date.now();
     parts = message.children[1].textContent.split(': ');
     if (parts.length > 1) {
       msg.title = parts[0];
@@ -296,28 +311,18 @@ function clearSide() {
 
 
 function toggleTracking() {
-  room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
   if (/off$/.test(onoff.textContent)) {
-    onoff.textContent = 'spamtracker: on';
     switchOn();
     stored.track[room] = true;
   }
   else {
-    onoff.textContent = 'spamtracker: off';
     switchOff();
     stored.track[room] = false;
   }
 }
 
 
-function saveData() {
-  chrome.storage.sync.set(stored);
-  window.setTimeout(saveData, 120000);
-}
-
-
 function bad(text, rules) {
-  var report;
   for (var i=0; i<rules.length; i++) {
     if (rules[i].test(text)) {
       return rules[i];
