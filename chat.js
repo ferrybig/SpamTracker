@@ -11,8 +11,8 @@ var titleRules = sumRules.concat([ /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans
 
 
 var prioritySites = ['android', 'beer', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'datascience',
-  'ebooks', 'economics', 'engineering', 'expatriates', 'freelancing', 'genealogy', 'ham', 'hsm', 'law',
-  'martialarts', 'mechanics', 'money', 'musicfans', 'mythology', 'outdoors', 'patents', 'pm', 'poker',
+  'drupal', 'ebooks', 'economics', 'engineering', 'expatriates', 'freelancing', 'genealogy', 'ham', 'hsm', 'law',
+  'martialarts', 'mechanics', 'meta', 'money', 'musicfans', 'mythology', 'outdoors', 'patents', 'pm', 'poker',
   'productivity', 'quant', 'robotics', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'woodworking'];
 
 var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
@@ -133,12 +133,12 @@ function processQuestion(q) {
   if (!stored.maxU[site]) {
     stored.maxU[site] = 1;
   }
+  insert = false;
   consider = (uId > stored.maxU[site]-3 && uId < 1.01*stored.maxU[site]) ;
   consider = consider && (qId > stored.maxQ[site] && qId < 1.01*stored.maxQ[site]);
   consider = consider && (ignoredSites.indexOf(shortSite) == -1);
   report = site+'/'+qId+' ';
   if (consider) {
-    insert = false;
     if (summary.length < 100) {
       insert = true;
       report = report + 'short summary:' + summary + '\n';
@@ -164,7 +164,7 @@ function processQuestion(q) {
       reportIt(report, site, qId, 'Q', title, url, q.ownerUrl, user, summary);
     }
   }
-  if (prioritySites.indexOf(shortSite)!=-1) {
+  if (!insert && prioritySites.indexOf(shortSite)!=-1) {
     window.setTimeout(fetchBody, 60000, shortSite);
   }
   if (qId>stored.maxQ[site]) {
@@ -183,7 +183,7 @@ function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summ
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
-    notifyMe(msgId, shortSite+': '+title, summary);
+    notifyMe(msgId, type+': '+title+' &mdash; '+shortSite, summary);
   
     qblock = newElem('div',msgId,'q-block','');
     qblock.innerHTML = '<a class="q-title" target="_blank" href="'+url+'">' + type + ': ' + title + ' &mdash; ' + shortSite + '</a><a target="_blank" href="'+ownerURL+'">' + ownerName + '</a>';
