@@ -3,7 +3,7 @@
 
   "name": "Fight spam on SE sites",
   "description": "Alerts of suspicious new posts, and of spam reports in chat",
-  "version": "15.7.6",
+  "version": "15.7.7",
   
   "icons": {
      "16": "icon16.png",
