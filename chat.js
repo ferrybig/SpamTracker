@@ -137,11 +137,11 @@ function processQuestion(q) {
   consider = (uId > stored.maxU[site]-3 && uId < 1.01*stored.maxU[site]) ;
   consider = consider && (qId > stored.maxQ[site] && qId < 1.01*stored.maxQ[site]);
   consider = consider && (ignoredSites.indexOf(shortSite) == -1);
-  report = site+'/'+qId+' ';
+  report = 'http://'+site+'/'+qId+' ';
   if (consider) {
     if (summary.length < 100) {
       insert = true;
-      report = report + 'short summary:' + summary + '\n';
+      report = report + 'short summary: ' + summary + '\n';
     }
     hh = new Date().getUTCHours();
     if (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10) {
