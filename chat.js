@@ -6,7 +6,7 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
   /\blover?\b/i, /\bloans?/i, /serum/i];
 var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
-  /\b(phone|support).*number\b/i, /\bimprove\b/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i,
+  /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i, 
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
@@ -204,7 +204,7 @@ function fetchBody(shortSite) {
   var request = '//api.stackexchange.com/2.2/posts?pagesize=1&order=desc&sort=creation&site='+(shortSite=='ru'?'ru.stackoverflow':shortSite)+'&filter=!iC9ukKyJYHQsubblNz.rBx&key='+apiKey;
   getStuff(request, 'json', function(e) {
     var q=e.currentTarget.response.items[0], url, site, summary, elem, report, qId;
-    if (q.owner.reputation == 1) {
+    if (q.owner && q.owner.reputation == 1) {
       url = q.share_link;
       site = url.split('/')[2];
       qId = q.post_id;
@@ -295,6 +295,7 @@ function processChatMessage(message) {
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
     metabeep.play();
+    console.log(message.children[1].textContent); 
   }
 }
 
