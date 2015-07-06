@@ -4,10 +4,10 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i,
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i, 
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
-  /\blover?\b/i, /\bloans?/i];
+  /\blover?\b/i, /\bloans?/i, /serum/i];
 var titleRules = sumRules.concat([ /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
   /\b(phone|support).*number\b/i, /\bimprove\b/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i,
-  /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i ]);
+  /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
 var prioritySites = ['android', 'beer', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'datascience',
@@ -137,7 +137,7 @@ function processQuestion(q) {
   consider = (uId > stored.maxU[site]-3 && uId < 1.01*stored.maxU[site]) ;
   consider = consider && (qId > stored.maxQ[site] && qId < 1.01*stored.maxQ[site]);
   consider = consider && (ignoredSites.indexOf(shortSite) == -1);
-  report = 'http://'+site+'/'+qId+' ';
+  report = 'http://'+site+'/q/'+qId+' ';
   if (consider) {
     if (summary.length < 100) {
       insert = true;
