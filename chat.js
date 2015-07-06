@@ -5,7 +5,7 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i, 
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
   /\blover?\b/i, /\bloans?/i, /serum/i];
-var titleRules = sumRules.concat([ /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
+var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
   /\b(phone|support).*number\b/i, /\bimprove\b/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i,
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
