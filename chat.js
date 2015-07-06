@@ -259,7 +259,6 @@ function processChatMessage(message) {
   var content = message.children[1].innerHTML;
   var i, msg = {}, parts, ch, path, hash, site = '', qId = '', sq;
   if (smoke.test(content) && /http/i.test(content)) {
-    metabeep.play();
     ch = message.children[1].children;
     for (i=ch.length-1; i>=0; i--) {
       if (ch[i].tagName == 'A') {
@@ -296,6 +295,7 @@ function processChatMessage(message) {
     }
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
+    metabeep.play();
   }
 }
 
