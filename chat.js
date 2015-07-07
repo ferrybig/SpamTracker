@@ -43,6 +43,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 var box = document.getElementById('input');
 var chat = document.getElementById('chat');
 var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
+var keepGoing = true; 
 
 if (box && chat && room) {
   insertRef = document.getElementById('footer-legal');
@@ -81,6 +82,7 @@ function switchOn() {
   ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
   ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
   ws.onopen = function() { ws.send('155-questions-active'); };
+  ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
   observer.observe(chat, {childList: true});
 
   clearchat = newElem('a', 'clearchat', 'button', 'clear');
@@ -101,12 +103,14 @@ function switchOn() {
 
   onoff.textContent = 'spamtracker: on';
   savingData = window.setInterval(function() {chrome.storage.sync.set(stored);}, 120000);
+  keepGoing = true; 
 }
 
 
 function switchOff() {
-  ws.close();
-  observer.disconnect();
+  keepGoing = false; 
+  observer.disconnect();  
+  ws.close();  
   clearchat.remove();
   clearside.remove();
   priorityList.remove();
