@@ -2,18 +2,18 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
   /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /vashikaran/i, /advantage.*price/i,  /natural(ly)?\b/i, /pure\sbody/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i,
   /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i,
-  /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i, 
+  /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i,
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
   /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i];
 var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
-  /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i, 
+  /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i,
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
 var prioritySites = ['academia', 'android', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'cs', 'datascience',
   'drupal', 'ebooks', 'economics', 'engineering', 'expatriates', 'freelancing', 'gamedev', 'genealogy', 'ham', 'hsm', 'law',
   'martialarts', 'mechanics', 'meta', 'money', 'musicfans', 'mythology', 'opensource', 'outdoors', 'patents', 'pm', 'poker',
-  'productivity', 'quant', 'robotics', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'woodworking'];
+  'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'woodworking'];
 
 var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
 
@@ -179,7 +179,7 @@ function processQuestion(q) {
 function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summary) {
   var qblock, elem, msgId, shortSite = site.split('.')[0], ueTitle, ueSummary;
   if (inserted.indexOf(shortSite+qId) == -1) {
-    // beep.play(); too many beeps 
+    // beep.play(); too many beeps
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
@@ -203,16 +203,34 @@ function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summ
 function fetchBody(shortSite) {
   var request = '//api.stackexchange.com/2.2/posts?pagesize=1&order=desc&sort=creation&site='+(shortSite=='ru'?'ru.stackoverflow':shortSite)+'&filter=!iC9ukKyJYHQsubblNz.rBx&key='+apiKey;
   getStuff(request, 'json', function(e) {
-    var q=e.currentTarget.response.items[0], url, site, summary, elem, report, qId;
+    var q=e.currentTarget.response.items[0], url, site, body, elem, report, qId, insert, reg;
+    url = q.share_link;
+    site = url.split('/')[2];
+    qId = q.post_id;
+    elem = document.createElement('span');
+    elem.innerHTML = q.body;
+    body = elem.textContent;
+    report = url+' ';
+    insert = false;
     if (q.owner && q.owner.reputation == 1) {
-      url = q.share_link;
-      site = url.split('/')[2];
-      qId = q.post_id;
-      elem = document.createElement('span');
-      elem.innerHTML = q.body;
-      summary = elem.textContent.slice(0,150);
-      report = url+' new user on a priority site';
-      reportIt(report, site, qId, (q.post_type=='question' ? 'Q' : 'A'), q.title, url, q.owner.link, q.owner.display_name, summary);
+      if (q.post_type == 'answer') {
+        insert = true;
+        report = report+' answer by a rep 1 user\n';
+      }
+      if (body.length < 100) {
+        insert = true;
+        report = report + 'short post: ' + body + '\n';
+      }
+      if (q.post_type == 'question') {
+        reg = bad(body, sumRules);
+      }
+      if (reg) {
+        insert = true;
+        report = report + 'body matched ' + reg + '\n';
+      }
+    }
+    if (insert) {
+      reportIt(report, site, qId, (q.post_type=='question' ? 'Q' : 'A'), q.title, url, q.owner.link, q.owner.display_name, body.slice(0,150));
     }
   });
 }
@@ -295,7 +313,7 @@ function processChatMessage(message) {
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
     metabeep.play();
-    console.log(message.children[1].textContent); 
+    console.log(message.children[1].textContent);
   }
 }
 
@@ -339,9 +357,9 @@ function bad(text, rules) {
 
 function newElem(eType,eId,eClass,eText) {
   var e = document.createElement(eType);
-  if (eId.length>0) {e.id = eId}
-  if (eClass.length>0) {e.classList.add(eClass)}
-  if (eText.length>0) {e.textContent = eText}
+  if (eId.length>0) {e.id = eId;}
+  if (eClass.length>0) {e.classList.add(eClass);}
+  if (eText.length>0) {e.textContent = eText;}
   return e;
 }
 
