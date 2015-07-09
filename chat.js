@@ -4,7 +4,7 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*nu
   /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i,
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i,
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
-  /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i, /poker/i];
+  /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i];
 var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
   /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i,
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
@@ -44,7 +44,6 @@ var box = document.getElementById('input');
 var chat = document.getElementById('chat');
 var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
 var keepGoing = true;
-var quotaRemaining = 10000;
 
 if (box && chat && room) {
   insertRef = document.getElementById('footer-legal');
@@ -61,7 +60,7 @@ if (box && chat && room) {
   var metabeep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
   
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
-  var stored = {maxQ: {}, maxU: {}, track: {}};
+  var stored = {maxQ: {}, maxU: {}, track: {}, quota: 10000};
   var inserted = [], time = 0;
   
   chrome.storage.sync.get(stored, function(items) {
@@ -74,7 +73,7 @@ if (box && chat && room) {
       console.log('Max user Id');
       console.log(stored.maxU);
       console.log('Quota remaining');
-      console.log(quotaRemaining);
+      console.log(stored.quota);
     }
     if (stored.track[room]) {
       switchOn();
@@ -173,7 +172,7 @@ function processQuestion(q) {
       reportIt(report, site, qId, 'Q', title, url, q.ownerUrl, user, summary);
     }
   }
-  if (!insert && prioritySites.indexOf(shortSite)!=-1 && quotaRemaining) {
+  if (!insert && prioritySites.indexOf(shortSite)!=-1) {
     window.setTimeout(fetchBody, 60000, shortSite);
   }
   if (qId>stored.maxQ[site]) {
@@ -213,7 +212,7 @@ function fetchBody(shortSite) {
   var request = '//api.stackexchange.com/2.2/posts?pagesize=1&order=desc&sort=creation&site='+(shortSite=='ru'?'ru.stackoverflow':shortSite)+'&filter=!5RBFam4sA56hQ2Q5G3*uvo3fl&key='+apiKey;
   getStuff(request, 'json', function(e) {
     var q=e.currentTarget.response.items[0], url, site, body, elem, report, qId, insert, reg;
-    quotaRemaining = e.currentTarget.response.quota_remaining;
+    stored.quota = e.currentTarget.response.quota_remaining;
     url = q.share_link;
     site = url.split('/')[2];
     qId = q.post_id;
