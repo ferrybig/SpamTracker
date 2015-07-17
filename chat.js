@@ -1,7 +1,7 @@
 var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
   /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /vashikaran/i, /advantage.*price/i,  /natural(ly)?\b/i, /pure\sbody/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i,
-  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i,
+  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i, /runescape/i,
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i,
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
   /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i, /\bAlpha\b/, /\bultra\b/i, /\bPro\b/ ];
@@ -11,11 +11,11 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
 
 
 var prioritySites = ['academia', 'android', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'cs', 'datascience',
-  'drupal', 'ebooks', 'economics', 'engineering', 'expatriates', 'freelancing', 'gamedev', 'genealogy', 'ham', 'hsm', 'law',
+  'drupal', 'ebooks', 'economics', 'elementaryos', 'engineering', 'expatriates', 'freelancing', 'gamedev', 'genealogy', 'ham', 'hsm', 'law',
   'martialarts', 'mechanics', 'meta', 'money', 'musicfans', 'mythology', 'opensource', 'outdoors', 'patents', 'pm', 'poker',
   'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'woodworking', 'writers'];
 
-var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
+var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu', 'unix'];
 
 var ignoredSites = ['biology', 'christianity', 'fitness', 'health', 'hermeneutics', 'hinduism', 'islam', 'ja', 'judaism', 'lifehacks', 'pt'];
 
@@ -84,11 +84,11 @@ function switchOn() {
   ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
   observer.observe(chat, {childList: true});
 
-  clearchat = newElem('a', 'clearchat', 'button', 'clear');
+  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
   clearchat.title = 'remove all chat messages';
   clearchat.onclick = clearChat;
-  insertRef = document.querySelector('#container br');
-  insertRef.parentNode.insertBefore(clearchat, insertRef);
+  insertRef = document.querySelector('#chat-buttons');
+  insertRef.appendChild(clearchat, insertRef);
 
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
