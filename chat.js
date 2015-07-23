@@ -19,7 +19,7 @@ var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu', 'unix'];
 
 var ignoredSites = ['biology', 'christianity', 'fitness', 'health', 'hermeneutics', 'hinduism', 'islam', 'ja', 'judaism', 'lifehacks', 'pt'];
 
-var insertRef, ws, clearchat, clearside, observer, priorityList, savingData;
+var insertRef, ws, clearchat, clearside, observer, priorityList, savingData, wsVolume=0;
 var observer = new MutationObserver(function(mutations) {
       var messageList = document.getElementsByClassName('message');
       var message = messageList[messageList.length-1];
@@ -63,13 +63,6 @@ if (box && chat && room) {
   var stored = {maxQ: {}, maxU: {}, track: {}};
   var inserted = [], time = 0;
 
-  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
-  clearchat.title = 'remove all chat messages';
-  clearchat.onclick = clearChat;
-  insertRef = document.querySelector('#chat-buttons');
-  insertRef.appendChild(clearchat, insertRef);
-  observer.observe(chat, {childList: true});
-
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     stored = items;
@@ -87,9 +80,20 @@ if (box && chat && room) {
 function switchOn() {
   var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
   ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
-  ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
+  ws.onmessage = function(e) {
+    wsVolume = wsVolume + e.data.length;
+    processQuestion(JSON.parse(JSON.parse(e.data).data));
+  };
   ws.onopen = function() { ws.send('155-questions-active'); };
   ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
+
+  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
+  clearchat.title = 'remove all chat messages';
+  clearchat.onclick = clearChat;
+  insertRef = document.querySelector('#chat-buttons');
+  insertRef.appendChild(clearchat, insertRef);
+  
+  observer.observe(chat, {childList: true});
 
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
@@ -107,13 +111,20 @@ function switchOn() {
 }
 
 
-function switchOff() {
+function pauseST() {
   keepGoing = false;
   ws.close();
   clearside.remove();
   priorityList.remove();
-  onoff.textContent = 'spamtracker: off';
+  onoff.textContent = 'spamtracker: paused';
   window.clearInterval(savingData);
+}
+
+
+function switchOff() {
+  observer.disconnect();
+  clearchat.remove();
+  onoff.textContent = 'spamtracker: off';
 }
 
 
@@ -181,7 +192,6 @@ function processQuestion(q) {
 function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summary) {
   var qblock, elem, msgId, shortSite = site.split('.')[0], ueTitle, ueSummary;
   if (inserted.indexOf(shortSite+qId) == -1) {
-    // beep.play(); too many beeps
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
@@ -233,7 +243,7 @@ function fetchBody(shortSite) {
     }
     if (insert) {
       reportIt(report, site, qId, (q.post_type=='question' ? 'Q' : 'A'), q.title, url, q.owner.link, q.owner.display_name, body.slice(0,150));
-      report = 'Quota remaining: '+e.currentTarget.response.quota_remaining;
+      report = 'Quota remaining: '+e.currentTarget.response.quota_remaining+'\nWebsockets volume: '+wsVolume;
       console.log(report);
     }
   });
@@ -338,13 +348,18 @@ function clearSide() {
 
 
 function toggleTracking() {
-  if (/off$/.test(onoff.textContent)) {
-    switchOn();
-    stored.track[room] = true;
-  }
-  else {
-    switchOff();
-    stored.track[room] = false;
+  var currentStatus = onoff.textContent.split(': ')[1];
+  switch (currentStatus) {
+    case "off":
+      switchOn();
+      stored.track[room] = true;
+      break;
+    case "on":
+      pauseST();
+      stored.track[room] = false;
+      break;
+    case "paused":
+      switchOff();
   }
 }
 
