@@ -1,10 +1,10 @@
-var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /\bcleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
+var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /cleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
   /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /vashikaran/i, /advantage.*price/i,  /natural(ly)?\b/i, /pure\sbody/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i,
-  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /for\ssale/i, /\bhack/i, /\bcheat/i, /\bwow\sgold\b/i, /runescape/i,
+  /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /sale/i, /\bhack/i, /cheat/i, /\bwow\sgold\b/i, /runescape/i,
   /\bfifa.*coin/i, /\bcheap/i, /\bskin/i, /\bweight\b/i, /\bacne\b/i, /\bage\b/i, /\bbody.*build/i, /\bsupplements?\b/i, /\bhealth/i, /\bpenis\b/i,
-  /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /\bmuscle\b/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
-  /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i, /\bAlpha\b/, /\bultra\b/i, /\bPro\b/ ];
+  /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /muscle/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
+  /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i, /fitness/i, /\bAlpha\b/, /\bultra\b/i, /\bPro\b/ ];
 var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
   /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i,
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
@@ -62,7 +62,14 @@ if (box && chat && room) {
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
   var stored = {maxQ: {}, maxU: {}, track: {}};
   var inserted = [], time = 0;
-  
+
+  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
+  clearchat.title = 'remove all chat messages';
+  clearchat.onclick = clearChat;
+  insertRef = document.querySelector('#chat-buttons');
+  insertRef.appendChild(clearchat, insertRef);
+  observer.observe(chat, {childList: true});
+
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     stored = items;
@@ -76,19 +83,13 @@ if (box && chat && room) {
   });
 }
 
+
 function switchOn() {
   var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
   ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
   ws.onmessage = function(e) { processQuestion(JSON.parse(JSON.parse(e.data).data)) };
   ws.onopen = function() { ws.send('155-questions-active'); };
   ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
-  observer.observe(chat, {childList: true});
-
-  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
-  clearchat.title = 'remove all chat messages';
-  clearchat.onclick = clearChat;
-  insertRef = document.querySelector('#chat-buttons');
-  insertRef.appendChild(clearchat, insertRef);
 
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
@@ -108,9 +109,7 @@ function switchOn() {
 
 function switchOff() {
   keepGoing = false;
-  observer.disconnect();
   ws.close();
-  clearchat.remove();
   clearside.remove();
   priorityList.remove();
   onoff.textContent = 'spamtracker: off';
