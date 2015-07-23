@@ -56,12 +56,17 @@ if (box && chat && room) {
   onoff.style.cursor = 'pointer';
   insertRef.insertBefore(onoff, insertRef.firstChild);
   
-  var beep = new Audio('http://cdn-chat.sstatic.net/chat/se.mp3');
   var metabeep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
   
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
   var stored = {maxQ: {}, maxU: {}, track: {}};
   var inserted = [], time = 0;
+
+  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
+  clearchat.title = 'remove all chat messages';
+  clearchat.onclick = clearChat;
+  insertRef = document.querySelector('#chat-buttons');
+  insertRef.appendChild(clearchat, insertRef);
 
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
@@ -87,12 +92,6 @@ function switchOn() {
   ws.onopen = function() { ws.send('155-questions-active'); };
   ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
 
-  clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
-  clearchat.title = 'remove all chat messages';
-  clearchat.onclick = clearChat;
-  insertRef = document.querySelector('#chat-buttons');
-  insertRef.appendChild(clearchat, insertRef);
-  
   observer.observe(chat, {childList: true});
 
   clearside = newElem('a', 'clearside', 'button', 'clear');
@@ -116,15 +115,14 @@ function pauseST() {
   ws.close();
   clearside.remove();
   priorityList.remove();
-  onoff.textContent = 'spamtracker: paused';
+  onoff.textContent = 'spamtracker: chat only';
   window.clearInterval(savingData);
+  onoff.textContent = 'spamtracker: off';  
 }
 
 
 function switchOff() {
   observer.disconnect();
-  clearchat.remove();
-  onoff.textContent = 'spamtracker: off';
 }
 
 
@@ -358,7 +356,7 @@ function toggleTracking() {
       pauseST();
       stored.track[room] = false;
       break;
-    case "paused":
+    case "chat only":
       switchOff();
   }
 }
