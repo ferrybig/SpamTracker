@@ -117,12 +117,12 @@ function pauseST() {
   priorityList.remove();
   onoff.textContent = 'spamtracker: chat only';
   window.clearInterval(savingData);
-  onoff.textContent = 'spamtracker: off';  
 }
 
 
 function switchOff() {
   observer.disconnect();
+  onoff.textContent = 'spamtracker: off';  
 }
 
 
