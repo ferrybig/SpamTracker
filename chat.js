@@ -190,6 +190,7 @@ function processQuestion(q) {
 function reportIt(report, site, qId, type, title, url, ownerURL, ownerName, summary) {
   var qblock, elem, msgId, shortSite = site.split('.')[0], ueTitle, ueSummary;
   if (inserted.indexOf(shortSite+qId) == -1) {
+    report = report + 'At ' + new Date().toString().split(" ")[4] + '\nWebsockets volume: '+wsVolume+'\n';
     console.log(report);
     inserted.push(shortSite+qId);
     msgId = room+'-'+site+'-'+qId+'-'+Date.now();
@@ -241,7 +242,7 @@ function fetchBody(shortSite) {
     }
     if (insert) {
       reportIt(report, site, qId, (q.post_type=='question' ? 'Q' : 'A'), q.title, url, q.owner.link, q.owner.display_name, body.slice(0,150));
-      report = 'Quota remaining: '+e.currentTarget.response.quota_remaining+'\nWebsockets volume: '+wsVolume;
+      report = 'Quota remaining: '+e.currentTarget.response.quota_remaining;
       console.log(report);
     }
   });
