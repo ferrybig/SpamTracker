@@ -71,8 +71,13 @@ if (box && chat && room) {
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     stored = items;
-    if (stored.track[room]) {
-      switchOn();
+    if (stored.track[room] && stored.track[room]!=='off') {
+      if (stored.track[room] === 'on') {
+        switchOn();
+      }
+      else {
+        startPaused();
+      }
     }
     console.log('Max post Id');
     console.log(stored.maxQ);
@@ -80,7 +85,6 @@ if (box && chat && room) {
     console.log(stored.maxU);
   });
 }
-
 
 function switchOn() {
   var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
@@ -116,13 +120,23 @@ function pauseST() {
   clearside.remove();
   priorityList.remove();
   onoff.textContent = 'spamtracker: chat only';
+  stored.track[room] = 'chat only';
+  chrome.storage.sync.set(stored);
   window.clearInterval(savingData);
+}
+
+
+function startPaused() {
+  observer.observe(chat, {childList: true});
+  onoff.textContent = 'spamtracker: chat only';
 }
 
 
 function switchOff() {
   observer.disconnect();
-  onoff.textContent = 'spamtracker: off';  
+  onoff.textContent = 'spamtracker: off';
+  stored.track[room] = 'off';
+  chrome.storage.sync.set(stored);
 }
 
 
@@ -332,9 +346,13 @@ function processChatMessage(message) {
 
 
 function clearChat() {
-  var chat = document.getElementById("chat");
+  var chat = document.getElementById('chat');
   while (chat.firstElementChild) {
     chat.removeChild(chat.firstElementChild);
+  }
+  var starred = document.querySelector('#starred-posts ul');
+  while (starred.firstElementChild) {
+    starred.removeChild(starred.firstElementChild);
   }
 }
 
@@ -351,11 +369,9 @@ function toggleTracking() {
   switch (currentStatus) {
     case "off":
       switchOn();
-      stored.track[room] = true;
       break;
     case "on":
       pauseST();
-      stored.track[room] = false;
       break;
     case "chat only":
       switchOff();
