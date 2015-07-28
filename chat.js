@@ -59,7 +59,7 @@ if (box && chat && room) {
   var metabeep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
   
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
-  var stored = {maxQ: {}, maxU: {}, track: {}};
+  var stored = {maxQ: {}, maxU: {}};
   var inserted = [], time = 0;
 
   clearchat = newElem('a', 'clearchat', 'button', 'clear chat');
@@ -71,18 +71,6 @@ if (box && chat && room) {
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     stored = items;
-    if (stored.track[room] && stored.track[room]!=='off') {
-      if (stored.track[room] === 'on') {
-        switchOn();
-      }
-      else {
-        startPaused();
-      }
-    }
-    console.log('Max post Id');
-    console.log(stored.maxQ);
-    console.log('Max user Id');
-    console.log(stored.maxU);
   });
 }
 
@@ -111,6 +99,11 @@ function switchOn() {
   onoff.textContent = 'spamtracker: on';
   savingData = window.setInterval(function() {chrome.storage.sync.set(stored);}, 120000);
   keepGoing = true;
+  
+  console.log('Max post Id');
+  console.log(stored.maxQ);
+  console.log('Max user Id');
+  console.log(stored.maxU);
 }
 
 
@@ -120,23 +113,14 @@ function pauseST() {
   clearside.remove();
   priorityList.remove();
   onoff.textContent = 'spamtracker: chat only';
-  stored.track[room] = 'chat only';
   chrome.storage.sync.set(stored);
   window.clearInterval(savingData);
-}
-
-
-function startPaused() {
-  observer.observe(chat, {childList: true});
-  onoff.textContent = 'spamtracker: chat only';
 }
 
 
 function switchOff() {
   observer.disconnect();
   onoff.textContent = 'spamtracker: off';
-  stored.track[room] = 'off';
-  chrome.storage.sync.set(stored);
 }
 
 
