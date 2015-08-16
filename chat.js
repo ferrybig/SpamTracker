@@ -34,7 +34,7 @@ var box = document.getElementById('input');
 var chat = document.getElementById('chat');
 var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
 var keepGoing = true;
-var currentStatus = 'off';
+var currentStatus = 'chat only';
 
 window.setInterval(checkForSpam, 500);
 
@@ -43,7 +43,7 @@ if (box && chat && room) {
   var separator = document.createTextNode(' | ');
   insertRef.insertBefore(separator, insertRef.firstChild);
   
-  var onoff = newElem('a', 'on-off', '', 'spamtracker: off');
+  var onoff = newElem('a', 'on-off', '', 'spamtracker: '+currentStatus);
   onoff.title = 'toggle spam tracking';
   onoff.onclick = toggleTracking;
   onoff.style.cursor = 'pointer';
@@ -102,8 +102,7 @@ function switchOn() {
   priorityList = newElem('div','priorityList','question-list','');
   insertRef.parentNode.insertBefore(priorityList, insertRef);
 
-  onoff.textContent = 'spamtracker: on';
-  currentStatus = 'on'; 
+  currentStatus = 'on';
   savingData = window.setInterval(function() {chrome.storage.sync.set(stored);}, 120000);
   keepGoing = true;
   
@@ -119,7 +118,6 @@ function pauseST() {
   ws.close();
   clearside.remove();
   priorityList.remove();
-  onoff.textContent = 'spamtracker: chat only';
   currentStatus = 'chat only';
   chrome.storage.sync.set(stored);
   window.clearInterval(savingData);
@@ -127,7 +125,6 @@ function pauseST() {
 
 
 function switchOff() {
-  onoff.textContent = 'spamtracker: off';
   currentStatus = 'off';
 }
 
@@ -368,6 +365,7 @@ function toggleTracking() {
     case "chat only":
       switchOff();
   }
+  onoff.textContent = 'spamtracker: '+currentStatus;
 }
 
 
