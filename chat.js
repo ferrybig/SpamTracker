@@ -354,7 +354,6 @@ function clearSide() {
 
 
 function toggleTracking() {
-  var currentStatus = onoff.textContent.split(': ')[1];
   switch (currentStatus) {
     case "off":
       switchOn();
