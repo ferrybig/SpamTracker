@@ -10,7 +10,7 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
-var prioritySites = ['academia', 'android', 'arabic', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'cooking', 'cs', 'datascience',
+var prioritySites = ['academia', 'android', 'arabic', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'computergraphics', 'cooking', 'cs', 'datascience',
   'drupal', 'ebooks', 'economics', 'elementaryos', 'engineering', 'expatriates', 'freelancing', 'gamedev', 'genealogy', 'ham', 'hsm', 'law',
   'martialarts', 'mechanics', 'meta', 'money', 'musicfans', 'mythology', 'opensource', 'outdoors', 'patents', 'pm', 'poker', 'portuguese',
   'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'woodworking', 'writers'];
