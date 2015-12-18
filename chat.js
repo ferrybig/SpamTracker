@@ -10,14 +10,13 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
-var prioritySites = ['academia', 'android', 'arabic', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'civicrm', 'coffee', 'computergraphics', 'cooking', 'cs', 'datascience',
-  'drupal', 'ebooks', 'economics', 'elementaryos', 'engineering', 'expatriates', 'freelancing', 'gamedev', 'genealogy', 'ham', 'hsm', 'law',
-  'martialarts', 'mechanics', 'meta', 'money', 'musicfans', 'mythology', 'opensource', 'outdoors', 'patents', 'pm', 'poker', 'portuguese',
-  'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'woodworking', 'writers'];
+var prioritySites = ['academia', 'android', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'coffee', 'computergraphics', 'cooking', 'datascience',
+  'drupal', 'ebooks', 'expatriates', 'freelancing', 'genealogy', 'ham', 'hsm', 'law', 'mechanics', 'money', 'musicfans', 'mythology', 'opensource', 'patents', 
+  'pm', 'poker', 'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'writers'];
 
-var timeSensitiveSites = ['drupal', 'meta', 'superuser', 'askubuntu'];
+var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu']; // 'meta' moved to ignored
 
-var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt'];
+var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'meta'];
 
 var insertRef, ws, clearchat, clearside, priorityList, savingData, wsVolume=0;
 
@@ -288,7 +287,7 @@ function killBlock(elem) {
 
 
 function processChatMessage(message) {
-  var smoke = /spam|\/smokedetector|low quality|offensive|\brude\b|\babus/i;
+  var smoke = /spam|\/smokedetector|offensive|abusive/i;
   var content = message.children[1].innerHTML;
   var i, msg = {}, parts, ch, path, hash, site = '', qId = '', sq;
   if (smoke.test(content) && /http/i.test(content)) {
@@ -307,7 +306,7 @@ function processChatMessage(message) {
         }
       }
     }
-    if (site && qId) {
+    if (site && qId && 'site' != 'meta') {
       metabeep.play();
       sq = site.split('.')[0] + qId;
       if (inserted.indexOf(sq) != -1) {
