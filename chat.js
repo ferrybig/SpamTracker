@@ -10,13 +10,13 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
 
 
-var prioritySites = ['academia', 'android', 'beer', 'bicycles', 'boardgames', 'bricks', 'chess', 'coffee', 'computergraphics', 'cooking', 'datascience',
-  'drupal', 'ebooks', 'expatriates', 'freelancing', 'genealogy', 'ham', 'hsm', 'law', 'mechanics', 'money', 'musicfans', 'mythology', 'opensource', 'patents', 
-  'pm', 'poker', 'productivity', 'quant', 'robotics', 'ru', 'sound', 'startups', 'sustainability', 'travel', 'webapps', 'webmasters', 'writers'];
+var prioritySites = ['academia', 'android', 'beer', 'boardgames', 'chess', 'coffee', 'computergraphics', 'cooking', 'datascience',
+  'drupal', 'ebooks', 'expatriates', 'freelancing', 'hsm', 'law', 'mechanics', 'money', 'mythology', 'opensource', 'patents', 
+  'poker', 'productivity', 'quant', 'ru', 'startups', 'travel', 'webapps', 'webmasters', 'writers'];
 
 var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu']; // 'meta' moved to ignored
 
-var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'meta'];
+var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam', 'meta'];
 
 var insertRef, ws, clearchat, clearside, priorityList, savingData, wsVolume=0;
 
