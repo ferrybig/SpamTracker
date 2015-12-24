@@ -306,7 +306,10 @@ function processChatMessage(message) {
         }
       }
     }
-    if (site && qId && 'site' != 'meta.stackexchange.com') {   // ignore meta.se
+    if (site == 'meta.stackexchange.com') {
+      return;    // ignore meta.se
+    }
+    if (site && qId) {
       metabeep.play();
       sq = site.split('.')[0] + qId;
       if (inserted.indexOf(sq) != -1) {
