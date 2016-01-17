@@ -331,7 +331,6 @@ function processChatMessage(message) {
     }
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
-    console.log(message.children[1].textContent);
   }
 }
 
