@@ -11,12 +11,12 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
 
 
 var prioritySites = ['academia', 'android', 'beer', 'boardgames', 'chess', 'coffee', 'computergraphics', 'cooking', 'datascience',
-  'drupal', 'ebooks', 'expatriates', 'freelancing', 'hsm', 'law', 'mechanics', 'money', 'mythology', 'opensource', 'patents', 
+  'drupal', 'ebooks', 'engineering', 'expatriates', 'freelancing', 'hsm', 'law', 'mechanics', 'money', 'mythology', 'opensource', 'patents', 
   'poker', 'productivity', 'quant', 'ru', 'startups', 'travel', 'webapps', 'webmasters', 'writers'];
 
-var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu']; // 'meta' moved to ignored
+var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu', 'meta']; 
 
-var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam', 'meta'];
+var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam'];
 
 var insertRef, ws, clearchat, clearside, priorityList, savingData, wsVolume=0;
 
@@ -157,7 +157,7 @@ function processQuestion(q) {
       report = report + 'short summary: ' + summary + '\n';
     }
     hh = new Date().getUTCHours();
-    if (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=1 && hh<= 10) {
+    if (timeSensitiveSites.indexOf(shortSite)!=-1 && hh>=4 && hh<= 12) {
       insert = true;
       report = report + 'peak spam time\n';
     }
@@ -305,9 +305,6 @@ function processChatMessage(message) {
           qId = path[4];
         }
       }
-    }
-    if (site == 'meta.stackexchange.com') {
-      return;    // ignore meta.se
     }
     if (site && qId) {
       metabeep.play();
