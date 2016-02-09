@@ -48,7 +48,7 @@ if (box && chat && room) {
   onoff.style.cursor = 'pointer';
   insertRef.insertBefore(onoff, insertRef.firstChild);
   
-  var metabeep = new Audio('http://cdn-chat.sstatic.net/chat/meta2.mp3');
+  var metabeep = new Audio('//cdn-chat.sstatic.net/chat/meta2.mp3');
   
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
   var stored = {maxQ: {}, maxU: {}};
@@ -82,7 +82,7 @@ function checkForSpam() {
 }
 
 function switchOn() {
-  var prot = (window.location.protocol === 'https' ? 'wss' : 'ws');
+  var prot = (window.location.protocol === 'https:' ? 'wss' : 'ws');
   ws = new WebSocket(prot+'://qa.sockets.stackexchange.com/');
   ws.onmessage = function(e) {
     wsVolume = wsVolume + e.data.length;
