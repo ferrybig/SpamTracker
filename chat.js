@@ -317,10 +317,10 @@ function processChatMessage(message) {
       }
     }
     msg.id = room+'-'+site+'-'+qId+'-'+Date.now();
-    parts = message.children[1].textContent.split(': ');
-    if (parts.length > 1) {
-      msg.title = parts[0];
-      msg.message = parts[1];
+    var partIndex = message.children[1].textContent.indexOf(': ');
+    if (partIndex != -1) {
+      msg.title = message.children[1].textContent.slice(0, partIndex);
+      msg.message = message.children[1].textContent.slice(partIndex + 1);
     }
     else {
       msg.title = 'Flag Request';
