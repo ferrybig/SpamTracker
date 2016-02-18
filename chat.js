@@ -287,10 +287,10 @@ function killBlock(elem) {
 
 
 function processChatMessage(message) {
-  var smoke = /spam|\/smokedetector|offensive|abusive/i;
-  var content = message.children[1].innerHTML;
+  var smoke = /\[ SmokeDetector \]/;
+  var content = message.children[1].textContent;
   var i, msg = {}, parts, ch, path, hash, site = '', qId = '', sq;
-  if (smoke.test(content) && /http/i.test(content)) {
+  if (smoke.test(content)) {
     ch = message.children[1].children;
     for (i=ch.length-1; i>=0; i--) {
       if (ch[i].tagName == 'A') {
@@ -317,14 +317,10 @@ function processChatMessage(message) {
       }
     }
     msg.id = room+'-'+site+'-'+qId+'-'+Date.now();
-    var partIndex = message.children[1].textContent.indexOf(': ');
+    var partIndex = content.indexOf(': ');
     if (partIndex != -1) {
-      msg.title = message.children[1].textContent.slice(0, partIndex);
-      msg.message = message.children[1].textContent.slice(partIndex + 1);
-    }
-    else {
-      msg.title = 'Flag Request';
-      msg.message = message.children[1].textContent;
+      msg.title = content.slice(0, partIndex);
+      msg.message = content.slice(partIndex + 1).replace(/ \[\?\]$/, '');
     }
     msg.type = 'chat';
     chrome.runtime.sendMessage(msg);
