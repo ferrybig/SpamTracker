@@ -8,16 +8,16 @@ Adds a spam tracker to Stack Exchange chat rooms. Its switch is in the footer:
 
     spamtracker: off | help | faq | legal | ... 
 
-When the tracker is on, the sidebar of the chat room will display new posts that possibly merit attention. You can:
+The default mode is "chat only", when the extension generates desktop notifications (with sound) based on the reports of spam posts in chat by the [Smoke Detector](https://github.com/Charcoal-SE/SmokeDetector/wiki) bot. You can: 
+
+* click the notification to open the post in a new window, or 
+* click "False Report" to dismiss it as such, or
+* click "Go to Room" to go to the tab with the chat room.
+
+In the "on" mode, the tracker also uses websockets and Stack Exchange API to monitor new posts across the network. The sidebar of the chat room will display new posts that possibly merit attention. You can:
 
 * click on the title to open the post in another window, or
 * click on post summary to dismiss the report, or
-* click "Clear" button on top to dismiss all reports
-
-Additionally, desktop notifications are shown based on the above posts and on reports of bad posts in chat (in particular, by the Smoke Detector in [The Tavern](http://chat.meta.stackexchange.com/rooms/89/tavern-on-the-meta)). You can: 
-
-* click "False Report" to dismiss it as such, or
-* click "Go to Room" to go to the tab with the chat room, or
-* click elsewhere on the notification to open the post in a new window. 
+* click "clear" button on top to dismiss all reports.
 
 License: [WTFPL](http://www.wtfpl.net)
