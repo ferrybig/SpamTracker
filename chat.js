@@ -288,9 +288,10 @@ function killBlock(elem) {
 
 function processChatMessage(message) {
   var smoke = /\[ SmokeDetector \]/;
+  var ignore = /SmokeDetector started at/;
   var content = message.children[1].textContent;
   var i, msg = {}, parts, ch, path, hash, site = '', qId = '', sq;
-  if (smoke.test(content)) {
+  if (smoke.test(content) && !ignore.test(content)) {
     ch = message.children[1].children;
     for (i=ch.length-1; i>=0; i--) {
       if (ch[i].tagName == 'A') {
