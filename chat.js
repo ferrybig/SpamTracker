@@ -1,4 +1,4 @@
-var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /cleans/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
+var sumRules = [/^\S*$/i, /\bclean(ing|se)/i, /\b(phone|support).*number\b/i, /\bwow\sgold\b/i, /\bessays?\b/i, /\bbaba\s?ji\b/i,
   /\+91[\s\-\(]/i, /professional.*writ/i, /kickstarter/i, /natural.*ingredient/i, /\baffiliate\b/i, /\baging\b/i, /\bfifa\b/i, /\bbajotz\b/i,
   /\bbagprada\b/i, /\bbabyliss/i, /\bblack magic\b/i, /vashikaran/i, /advantage.*price/i,  /natural(ly)?\b/i, /pure\sbody/i, /fuck/i, /\bshit/i, /bitch/i, /\bsuck/i,
   /brain.*(boost|power)/i, /facts?\sabout/i, /\b100%\b/i, /live\sstream/i, /make\smoney/i, /sale/i, /\bhack/i, /cheat/i, /\bwow\sgold\b/i, /runescape/i,
@@ -6,13 +6,13 @@ var sumRules = [/^\S*$/i, /\bcolon.*clean/i, /cleans/i, /\b(phone|support).*numb
   /\bnutrition/i, /\bfat\b/i, /\bwrinkl/i, /\bdiet/i, /muscle/i, /\bbrain\b/i, /\bbaba\b/i, /clash ?of ?clans/i, /\bmale\b/i, /testo/i,
   /\blover?\b/i, /\bloans?/i, /serum/i, /overcome/i, /workout/i, /fitness/i, /\bAlpha\b/, /\bultra\b/i, /\bPro\b/, /beauty/i ];
 var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/i, /\bcleans/i, /\bloss\b/i, /\blose\b/i, /\bhelpline\b/i, /\bbuy\b/i, /\blose\b/i,
-  /\b(phone|support).*number\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i,
-  /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i ]);
+  /\bsupport\b/i, /\bimprove/i, /\bonline\b/i, /\byou\scan\b/i, /\bfree\b/i, /\bwholesale\b/i, /\bmarriage\b/i, /\blove\b/i, /\bpurchase\b/i,
+  /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i, /\bproduct\b/i, /\beffect/i ]);
 
 
-var prioritySites = ['academia', 'android', 'beer', 'boardgames', 'chess', 'coffee', 'computergraphics', 'cooking', 'datascience',
-  'drupal', 'ebooks', 'engineering', 'expatriates', 'freelancing', 'hsm', 'law', 'mechanics', 'money', 'mythology', 'opensource', 'patents', 
-  'poker', 'productivity', 'quant', 'ru', 'startups', 'travel', 'webapps', 'webmasters', 'writers'];
+var prioritySites = ['3dprinting', 'academia', 'android', 'cooking', 'craftcms', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates', 
+  'freelancing', 'ham', 'law', 'mechanics', 'money', 'movies', 'patents', 'poker', 'productivity', 'security', 'startups', 'travel', 
+  'webapps', 'webmasters', 'writers'];
 
 var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu', 'meta']; 
 
