@@ -14,6 +14,13 @@ The default mode is "chat only", when the extension generates desktop notificati
 * click "False Report" to dismiss it as such, or
 * click "Go to Room" to go to the tab with the chat room.
 
+One can choose sites to be notified about by adding URL parameters `?alert=site,site2` or `?ignore=site,site2` to the chat room URL. For example: 
+
+- `http://chat.stackexchange.com/rooms/11540/charcoal-hq?alert=stackoverflow` means only Stack Overflow posts will generate a notification
+- `http://chat.stackexchange.com/rooms/11540/charcoal-hq?ignore=stackoverflow,programmers` means Stack Overflow and Programmers posts will **not** generate a notification. 
+
+The site parameter here is the first part of the site's hostname: askubuntu, cooking, pt, ru, superuser, and so on. By default (no URL parameter) all sites are included. 
+
 In the "on" mode, the tracker also uses websockets and Stack Exchange API to monitor new posts across the network. The sidebar of the chat room will display new posts that possibly merit attention. You can:
 
 * click on the title to open the post in another window, or
