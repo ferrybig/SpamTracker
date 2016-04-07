@@ -10,11 +10,11 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i, /\bproduct\b/i, /\beffect/i ]);
 
 
-var prioritySites = ['3dprinting', 'academia', 'android', 'cooking', 'craftcms', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates', 
-  'freelancing', 'ham', 'law', 'mechanics', 'money', 'movies', 'patents', 'poker', 'productivity', 'security', 'startups', 'travel', 
+var prioritySites = ['3dprinting', 'academia', 'android', 'cooking', 'craftcms', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates',
+  'freelancing', 'ham', 'law', 'mechanics', 'money', 'movies', 'patents', 'poker', 'productivity', 'security', 'startups', 'travel',
   'webapps', 'webmasters', 'writers'];
 
-var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu', 'meta']; 
+var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu', 'meta'];
 
 var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam'];
 
@@ -34,6 +34,17 @@ var chat = document.getElementById('chat');
 var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
 var keepGoing = true;
 var currentStatus = 'chat only';
+
+var alertSites = [], noAlertSites = [];
+var params = window.location.search;
+var alertMatch = params.match(/alert=([\w.,]+)/);
+if (alertMatch) {
+  alertSites = alertMatch[1].split(',');
+}
+var noAlertMatch = params.match(/ignore=([\w.,]+)/);
+if (noAlertMatch) {
+  noAlertSites = noAlertMatch[1].split(',');
+}
 
 window.setInterval(checkForSpam, 500);
 
@@ -75,7 +86,7 @@ function checkForSpam() {
   var message = messageList[messageList.length-1];
   if (message && !message.classList.contains('checkedForSpam')) {
     message.classList.add('checkedForSpam');
-    if (message.children[1] && !message.parentNode.parentNode.classList.contains('mine') && !message.querySelector('.onebox')) {
+    if (message.children[1]) {
       processChatMessage(message);
     }
   }
@@ -307,9 +318,13 @@ function processChatMessage(message) {
         }
       }
     }
+    var shortSite = site.split('.')[0];
+    if (noAlertSites.indexOf(shortSite) > -1 || (alertSites.indexOf(shortSite) == -1 && alertSites.length > 1)) {
+      return;
+    }
     if (site && qId) {
       metabeep.play();
-      sq = site.split('.')[0] + qId;
+      sq = shortSite + qId;
       if (inserted.indexOf(sq) != -1) {
         return;
       }
