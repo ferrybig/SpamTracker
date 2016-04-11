@@ -319,7 +319,7 @@ function processChatMessage(message) {
       }
     }
     var shortSite = site.split('.')[0];
-    if (noAlertSites.indexOf(shortSite) > -1 || (alertSites.indexOf(shortSite) == -1 && alertSites.length > 1)) {
+    if (noAlertSites.indexOf(shortSite) > -1 || (alertSites.indexOf(shortSite) == -1 && alertSites.length > 0)) {
       return;
     }
     if (site && qId) {
