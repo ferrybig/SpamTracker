@@ -45,7 +45,10 @@ if (noAlertMatch) {
   noAlertSites = noAlertMatch[1].split(',');
 }
 
-window.setInterval(checkForSpam, 500);
+if (chat) {
+  var observer = new MutationObserver(checkForSpam);
+  observer.observe(chat, {childList: true, subtree: true});
+}
 
 if (box && chat && room) {
   insertRef = document.getElementById('footer-legal');
