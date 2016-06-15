@@ -11,9 +11,9 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
 
 
 var prioritySites = ['3dprinting', 'academia', 'android', 'apple', 'cooking', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates',
-  'gaming', 'mechanics', 'money', 'patents', 'poker', 'security', 'travel', 'webapps', 'webmasters', 'windowsphone'];
+'english', 'gaming', 'mechanics', 'money', 'patents', 'poker', 'security', 'travel', 'unix', 'webapps', 'webmasters', 'windowsphone'];
 
-var timeSensitiveSites = ['drupal', 'superuser', 'askubuntu', 'meta'];
+var timeSensitiveSites = ['arduino', 'askubuntu', 'drupal', 'meta', 'superuser', 'webmasters', 'workplace'];
 
 var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam'];
 
@@ -104,6 +104,11 @@ function switchOn() {
   ws.onopen = function() { ws.send('155-questions-active'); };
   ws.onclose = function() {if (keepGoing) {window.setTimeout(switchOn, 10000);} };
 
+  var oldButton = document.getElementById('clearside');
+  if (oldButton) {
+    oldButton.remove();
+  }
+  
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
   clearside.onclick = clearSide;
