@@ -10,7 +10,7 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
   /\bpurchas/i, /\bfull\shd\b/i, /\bcraigslist\b/i, /\bbenefits?\b/i, /beneficial/i, /advice/i, /perfect/i, /\bproduct\b/i, /\beffect/i ]);
 
 
-var prioritySites = ['3dprinting', 'academia', 'android', 'apple', 'cooking', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates',
+var prioritySites = ['3dprinting', 'academia', 'android', 'apple', 'arduino', 'cooking', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates',
 'english', 'gaming', 'mechanics', 'money', 'patents', 'poker', 'security', 'travel', 'unix', 'webapps', 'webmasters', 'windowsphone'];
 
 var timeSensitiveSites = ['arduino', 'askubuntu', 'drupal', 'meta', 'superuser', 'webmasters', 'workplace'];
