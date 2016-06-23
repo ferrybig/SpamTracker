@@ -108,10 +108,6 @@ function switchOn() {
   if (oldButton) {
     oldButton.remove();
   }
-  var oldList = document.getElementById('priorityList');
-  if (oldList) {
-    oldList.remove();
-  }
   
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
@@ -120,8 +116,12 @@ function switchOn() {
   insertRef.appendChild(clearside);
 
   insertRef = document.getElementById('roomtitle');
-  priorityList = newElem('div', 'priorityList', 'question-list', '');
-  insertRef.parentNode.insertBefore(priorityList, insertRef);
+  
+  priorityList = document.getElementById('priorityList');
+  if (!priorityList) {
+    priorityList = newElem('div', 'priorityList', 'question-list', '');
+    insertRef.parentNode.insertBefore(priorityList, insertRef);
+  }
 
   currentStatus = 'on';
   savingData = window.setInterval(function() {chrome.storage.sync.set(stored);}, 120000);
