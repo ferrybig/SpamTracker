@@ -11,7 +11,7 @@ var titleRules = sumRules.concat([/(\d)\1{2}/, /care\b/i, /\bwatch\b/i, /\bsell/
 
 
 var prioritySites = ['3dprinting', 'academia', 'android', 'apple', 'arduino', 'cooking', 'diy', 'drupal', 'electronics', 'engineering', 'expatriates',
-'english', 'gaming', 'mechanics', 'money', 'patents', 'poker', 'security', 'travel', 'unix', 'webapps', 'webmasters', 'windowsphone'];
+'english', 'gaming', 'mechanics', 'money', 'patents', 'physics', 'poker', 'security', 'travel', 'unix', 'webapps', 'webmasters', 'windowsphone'];
 
 var timeSensitiveSites = ['arduino', 'askubuntu', 'drupal', 'meta', 'superuser', 'webmasters', 'workplace'];
 
@@ -108,6 +108,10 @@ function switchOn() {
   if (oldButton) {
     oldButton.remove();
   }
+  var oldList = document.getElementById('priorityList');
+  if (oldList) {
+    oldList.remove();
+  }
   
   clearside = newElem('a', 'clearside', 'button', 'clear');
   clearside.title = 'dismiss all reports';
@@ -116,7 +120,7 @@ function switchOn() {
   insertRef.appendChild(clearside);
 
   insertRef = document.getElementById('roomtitle');
-  priorityList = newElem('div','priorityList','question-list','');
+  priorityList = newElem('div', 'priorityList', 'question-list', '');
   insertRef.parentNode.insertBefore(priorityList, insertRef);
 
   currentStatus = 'on';
