@@ -44,6 +44,11 @@ var noAlertMatch = params.match(/ignore=([\w.,]+)/);
 if (noAlertMatch) {
   noAlertSites = noAlertMatch[1].split(',');
 }
+var modeMatch = params.match(/mode=(\w+)/);
+if (modeMatch && (modeMatch[1] == 'on' || modeMatch[1] == 'off')) {
+  currentStatus = modeMatch[1];
+}
+
 
 if (chat) {
   var observer = new MutationObserver(checkForSpam);
@@ -55,7 +60,7 @@ if (box && chat && room) {
   var separator = document.createTextNode(' | ');
   insertRef.insertBefore(separator, insertRef.firstChild);
   
-  var onoff = newElem('a', 'on-off', '', 'spamtracker: '+currentStatus);
+  var onoff = newElem('a', 'on-off', '', 'spamtracker: ' + currentStatus);
   onoff.title = 'toggle spam tracking';
   onoff.onclick = toggleTracking;
   onoff.style.cursor = 'pointer';
@@ -76,6 +81,9 @@ if (box && chat && room) {
   chrome.storage.sync.get(stored, function(items) {
     var room = window.location.href.match(/chat[^/]*\/rooms\/\d+/)[0];
     stored = items;
+    if (currentStatus == 'on') {
+      switchOn();
+    }
   });
 }
 
