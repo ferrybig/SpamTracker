@@ -3,7 +3,7 @@
 
   "name": "Fight spam on SE sites",
   "description": "Alerts of suspicious new posts, and of spam reports in chat",
-  "version": "16.6.2",
+  "version": "16.8.1",
   
   "icons": {
      "16": "icon16.png",
@@ -23,6 +23,17 @@
     "persistent": false
   },
 
+  "web_accessible_resources": [
+	  "alarm.ogg",
+	  "pumpkin.ogg"	
+	],
+  
+  "options_ui": {
+      "page": "options.html",
+	  "chrome_style": true
+  },
+  
+  
   "content_scripts": [
     {
       "matches": ["*://chat.meta.stackexchange.com/*", "*://chat.stackexchange.com/*", "*://chat.stackoverflow.com/*"],

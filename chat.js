@@ -17,7 +17,7 @@ var timeSensitiveSites = ['arduino', 'askubuntu', 'drupal', 'meta', 'superuser',
 
 var ignoredSites = ['biology', 'fitness', 'health', 'ja', 'pt', 'es', 'islam'];
 
-var insertRef, ws, clearchat, clearside, priorityList, savingData, wsVolume=0;
+var metabeep, insertRef, ws, clearchat, clearside, priorityList, savingData, wsVolume=0;
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.dismiss) {
@@ -66,8 +66,21 @@ if (box && chat && room) {
   onoff.style.cursor = 'pointer';
   insertRef.insertBefore(onoff, insertRef.firstChild);
   
-  var metabeep = new Audio('//cdn-chat.sstatic.net/chat/meta2.mp3');
+  beepDict = {
+    'meta': '//cdn-chat.sstatic.net/chat/meta2.mp3',
+    'se': '//cdn-chat.sstatic.net/chat/se.mp3',
+    'so': '//cdn-chat.sstatic.net/chat/so.mp3',
+    'alarm': chrome.extension.getURL("alarm.ogg"),
+    'pumpkin': chrome.extension.getURL("pumpkin.ogg")
+  };
   
+  chrome.storage.sync.get({"notificationSound": 'meta'}, function(items) {
+    var beepUrl = beepDict[items.notificationSound];
+    if (beepUrl) {
+      metabeep = new Audio(beepUrl);
+    }
+  });
+
   var apiKey = '1gtS)lKgyVceC11VlgjyQw((';
   var stored = {maxQ: {}, maxU: {}};
   var inserted = [], time = 0;
@@ -342,7 +355,9 @@ function processChatMessage(message) {
       return;
     }
     if (site && qId) {
-      metabeep.play();
+      if (metabeep) {
+        metabeep.play();
+      }
       sq = shortSite + qId;
       if (inserted.indexOf(sq) != -1) {
         return;

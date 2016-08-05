@@ -8,7 +8,7 @@ Adds a spam tracker to Stack Exchange chat rooms. Its switch is in the footer:
 
     spamtracker: off | help | faq | legal | ... 
 
-The default mode is "chat only", when the extension generates desktop notifications (with sound) based on the reports of spam posts in chat by the [Smoke Detector](https://github.com/Charcoal-SE/SmokeDetector/wiki) bot. You can: 
+The default mode is "chat only", when the extension generates desktop notifications (with sound, configurable in the options menu) based on the reports of spam posts in chat by the [Smoke Detector](https://github.com/Charcoal-SE/SmokeDetector/wiki) bot. You can: 
 
 * click the notification to open the post in a new window, or 
 * click "False Report" to dismiss it as such, or
@@ -26,5 +26,7 @@ In the "on" mode, the tracker also uses websockets and Stack Exchange API to mon
 * click on the title to open the post in another window, or
 * click on post summary to dismiss the report, or
 * click "clear" button on top to dismiss all reports.
+
+The URL parameter `mode` can be used to start the extension in "on" mode (`?mode=on`) or "off" mode (`?mode=off`).
 
 License: [WTFPL](http://www.wtfpl.net)
