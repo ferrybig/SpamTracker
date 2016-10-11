@@ -2,8 +2,6 @@
 
 **Alerts of suspicious new posts on Stack Exchange, as well as of spam reports in chat.**
 
-*This Chrome extension is also available in [Chrome Web Store](https://chrome.google.com/webstore/detail/fight-spam-on-se-sites/pkpdgmdicibddkgkikdfnaggkdobhmgk)*
-
 Adds a spam tracker to Stack Exchange chat rooms. Its switch is in the footer:
 
     spamtracker: off | help | faq | legal | ... 
