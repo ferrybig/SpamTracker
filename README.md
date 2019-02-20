@@ -2,6 +2,9 @@
 
 **Alerts of suspicious new posts on Stack Exchange, as well as of spam reports in chat.**
 
+**Note:** This is a historic repository of code whose canonical repository is now at 
+https://github.com/Charcoal-SE/userscripts/blob/master/spamtracker/
+
 Adds a spam tracker to Stack Exchange chat rooms. Its switch is in the footer:
 
     spamtracker: off | help | faq | legal | ... 
